@@ -1,5 +1,6 @@
 import { useEffect, useState, useId } from "react"
 import { Link } from "react-router-dom"
+import { Books } from "../Books"
 
 const fetchMember = async () => {
   try {
@@ -15,29 +16,31 @@ const fetchMember = async () => {
 
 export function MyBooks() {
   const [member, setMember] = useState<any>(null)
+  const [isLoading, setIsLoading] = useState<Boolean>(false)
 
   useEffect(() => {
     ;(async () => {
+      setIsLoading(true)
       const member = await fetchMember()
+      setIsLoading(false)
       if (!member) return
       console.log("Member: ", member)
       setMember(member)
     })()
   }, [])
 
-  let links = []
-  const id = useId()
-  links = member?.books.map((bookId: string) => (
-    <div key={`${id}-bookId`}>
-      <Link to={`/books/${bookId}`}>{bookId}</Link>
-    </div>
-  ))
+  let content
+  if (isLoading) {
+    content = <div>Loading...</div>
+  } else if (member && member.books.length > 0) {
+    content = <Books books={member.books} />
+  } else if (member) {
+    content = <div>No books checked out</div>
+  }
   return (
     <div>
       <h1 className="text-2xl font-bold">Checked out books</h1>
-      {!member && <div>Loading...</div>}
-      {member && links.length > 0 && links}
-      {member && links.length === 0 && <div>No books checked out</div>}
+      {content}
     </div>
   )
 }

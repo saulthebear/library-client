@@ -15,10 +15,5 @@ export function Books({ books }: Props) {
       </div>
     )
   })
-  return (
-    <div>
-      <h1 className="text-2xl font-bold ml-5 mb-3">All Books</h1>
-      {bookComponents}
-    </div>
-  )
+  return <div>{bookComponents}</div>
 }
