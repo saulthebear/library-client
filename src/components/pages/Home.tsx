@@ -44,10 +44,12 @@ export function Home() {
     content = <div>{error}</div>
   } else {
     content = (
-      <div>
-        {" "}
-        <h1 className="text-2xl font-bold ml-5 mb-3">All Books</h1>{" "}
-        <Books books={filteredBooks} />
+      <div className="flex justify-center">
+        <div className="md:min-w-[500px]">
+          {" "}
+          <h1 className="text-2xl font-bold ml-5 mb-3">All Books</h1>{" "}
+          <Books books={filteredBooks} />
+        </div>
       </div>
     )
   }

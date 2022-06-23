@@ -89,10 +89,10 @@ export function BookDetails() {
   }
 
   return (
-    <div>
+    <div className="flex justify-center">
       {!book && <p>Loading...</p>}
       {book && (
-        <div className="p-5">
+        <div className="p-5 md:min-w-[500px]">
           <h1 className="text-3xl font-bold mb-3">{book.title}</h1>
           <div className="ml-5 space-y-3">
             <p className="text-lg font-semibold">Author: {book.author}</p>

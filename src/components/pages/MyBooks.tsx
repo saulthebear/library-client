@@ -38,9 +38,11 @@ export function MyBooks() {
     content = <div>No books checked out</div>
   }
   return (
-    <div>
-      <h1 className="text-2xl font-bold">Checked out books</h1>
-      {content}
+    <div className="flex justify-center">
+      <div className="p-5">
+        <h1 className="text-2xl font-bold">Checked out books</h1>
+        {content}
+      </div>
     </div>
   )
 }
