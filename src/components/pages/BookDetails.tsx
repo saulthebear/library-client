@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { Book } from "../../types/book"
 import { Availability } from "../Availability"
 import { BookForm } from "../BookForm"
@@ -19,6 +19,8 @@ const fetchBook = async (id: String) => {
 export function BookDetails() {
   const [book, setBook] = useState<Book | null>(null)
   const [isEditing, setIsEditing] = useState<Boolean>(false)
+
+  const navigate = useNavigate()
 
   const { id } = useParams()
 
@@ -67,6 +69,25 @@ export function BookDetails() {
     }
   }
 
+  const handleDelete = async () => {
+    if (!book) return
+    console.log("Deleting book: ", book)
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_API_URL}/books/${id}`,
+        { method: "DELETE" }
+      )
+      if (response.status >= 400) {
+        console.log("Could not delete book: ", response)
+        return
+      }
+
+      navigate("/")
+    } catch (error) {
+      console.warn("Error deleting book: ", error)
+    }
+  }
+
   return (
     <div>
       {!book && <p>Loading...</p>}
@@ -91,6 +112,14 @@ export function BookDetails() {
               >
                 {isEditing ? "Cancel" : "Edit"}
               </button>
+              {isEditing && (
+                <button
+                  className="px-5 py-2  text-white font-bold rounded-md bg-red-700"
+                  onClick={handleDelete}
+                >
+                  Delete
+                </button>
+              )}
               <button
                 className={`px-5 py-2  text-white font-bold rounded-md ${
                   !book.isCheckedOut ? "bg-green-600" : "bg-blue-600"
