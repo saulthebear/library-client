@@ -17,6 +17,7 @@ const fetchBooks = async () => {
 
 export function Home() {
   const [books, setBooks] = useState<Book[]>([])
+  const [filteredBooks, setFilteredBooks] = useState<Book[]>(books)
   const [error, setError] = useState<String>("")
   const [isLoading, setIsLoading] = useState<Boolean>()
 
@@ -27,6 +28,7 @@ export function Home() {
       const fetchedBooks = await fetchBooks()
       if (fetchedBooks.length > 0) {
         setBooks(fetchedBooks)
+        setFilteredBooks(fetchedBooks)
         setIsLoading(false)
         return
       }
@@ -45,14 +47,14 @@ export function Home() {
       <div>
         {" "}
         <h1 className="text-2xl font-bold ml-5 mb-3">All Books</h1>{" "}
-        <Books books={books} />
+        <Books books={filteredBooks} />
       </div>
     )
   }
 
   return (
     <div>
-      <Search />
+      <Search books={books} setBooks={setFilteredBooks} />
       {content}
     </div>
   )
