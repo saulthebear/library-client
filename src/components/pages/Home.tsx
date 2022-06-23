@@ -41,7 +41,13 @@ export function Home() {
   } else if (error) {
     content = <div>{error}</div>
   } else {
-    content = <Books books={books} />
+    content = (
+      <div>
+        {" "}
+        <h1 className="text-2xl font-bold ml-5 mb-3">All Books</h1>{" "}
+        <Books books={books} />
+      </div>
+    )
   }
 
   return (
