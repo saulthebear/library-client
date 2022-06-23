@@ -1,11 +1,11 @@
 import { useId, useState } from "react"
+import { useNavigate } from "react-router-dom"
 import { Book } from "../types/book"
-import Genre from "./Genre"
 
 type Props = {
   book: Book | null
-  setBook: (book: Book | null) => void
-  setIsEditing: (isEditing: boolean) => void
+  setBook: ((book: Book | null) => void) | undefined
+  setIsEditing: ((isEditing: boolean) => void) | undefined
 }
 
 export function BookForm({ book, setBook, setIsEditing }: Props) {
@@ -17,6 +17,8 @@ export function BookForm({ book, setBook, setIsEditing }: Props) {
   const [author, setAuthor] = useState<string>(book?.author || "")
   const [newGenre, setNewGenre] = useState<string>("")
   const [error, setError] = useState<string>("")
+
+  const navigate = useNavigate()
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value)
@@ -45,23 +47,50 @@ export function BookForm({ book, setBook, setIsEditing }: Props) {
 
     console.log("Submitting book: ", updatedBook)
 
-    try {
-      const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/books/${book?._id}`,
-        {
-          method: "PUT",
+    // If updating book
+    if (setBook && setIsEditing) {
+      try {
+        const response = await fetch(
+          `${process.env.REACT_APP_API_URL}/books/${book?._id}`,
+          {
+            method: "PUT",
+            body: JSON.stringify(updatedBook),
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        )
+        const data = await response.json()
+        if (setBook && setIsEditing) {
+          setBook(data)
+          setIsEditing(false)
+        }
+      } catch (error) {
+        console.warn("Error submitting book: ", error)
+        setError("Error submitting book")
+      }
+    } else {
+      // If creating book
+      try {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/books`, {
+          method: "POST",
           body: JSON.stringify(updatedBook),
           headers: {
             "Content-Type": "application/json",
           },
+        })
+        if (response.status >= 400) {
+          console.log("Could not create book: ", response)
+          setError("Error creating book")
+          return
         }
-      )
-      const data = await response.json()
-      setBook(data)
-      setIsEditing(false)
-    } catch (error) {
-      console.warn("Error submitting book: ", error)
-      setError("Error submitting book")
+        const data = await response.json()
+        const bookId = data._id
+        navigate(`/books/${bookId}`)
+      } catch (error) {
+        console.warn("Error creating book: ", error)
+        setError("Error creating book")
+      }
     }
   }
 
